@@ -7,7 +7,7 @@ await mongoose.connect(process.env.MONGODB_URI);
 console.log("DB Connected");
     }catch(error){
 console.log("DB Connection error",error.message);
-process.exit(l);
+process.exit(1);
     }
 }
  
