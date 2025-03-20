@@ -6,7 +6,7 @@ const fs=require("fs");
 const path=require("path");
 const sharp=require("sharp");
 const { addCategory } = require("./categoryController");
-
+const { ObjectId } = require("mongodb");
 
 const getProductAddPage=async (req,res)=>{
     try{
@@ -180,19 +180,28 @@ const unblockProduct = async (req, res) => {
 };
 const getEditProduct = async (req, res) => {
     try {
-        const id = req.query.id;
-       const product=await Product.findOne({_id:id});
-       const category=await Category.find({});
-       const brand=await Brand.find({});
-       res.render("edit-product",{
-        product:product,
-        cat:addCategory,
-        brand:brand,
-       })
-    }catch(error){
-res.redirect("/pageerror")
+        let proId = req.query.id;
+        proId = new ObjectId(proId);
+        const product = await Product.findOne({ _id: proId });
+        if (!product) {
+            console.log("Product not found");
+            return res.redirect("/pageerror");
+        }
+        product.productImage = product.productImage || [];
+        const category = await Category.find({});
+        const brand = await Brand.find({});
+        res.render("edit-product", {
+            product: product,
+            cat: category,
+            brand: brand,
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.redirect("/pageerror");
     }
-}
+};
+
 
 
 
