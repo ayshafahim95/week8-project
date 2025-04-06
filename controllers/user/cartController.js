@@ -216,23 +216,34 @@ const Product = require("../../models/productSchema");
 const Cart=require("../../models/cartSchema");
 const mongodb = require("mongodb");
 
+
 const getCartPage = async (req, res) => {
   try {
     const userId = req.session.user;
-    const user = await User.findById(userId).populate("cart.productId");
+
+    const cart = await Cart.findOne({ userId }).populate("Items.productId");
+    const user = await User.findById(userId);
 
     let quantity = 0;
     let grandTotal = 0;
-    const cartItems = user.cart.map((item) => {
-      quantity += item.quantity;
-      const total = item.quantity * item.productId.salePrice;
-      grandTotal += total;
-      return {
-        product: item.productId,
-        quantity: item.quantity,
-        total,
-      };
-    });
+    let cartItems = [];
+
+    if (cart && cart.Items.length > 0) {
+      cartItems = cart.Items.map((item) => {
+        quantity += item.quantity;
+
+        const product = item.productId;
+        const total = product.salePrice * item.quantity;
+
+        grandTotal += total;
+
+        return {
+          product,
+          quantity: item.quantity,
+          total,
+        };
+      });
+    }
 
     req.session.grandTotal = grandTotal;
 
@@ -242,11 +253,45 @@ const getCartPage = async (req, res) => {
       quantity,
       grandTotal,
     });
+
   } catch (error) {
     console.error("Error in getCartPage:", error);
     res.redirect("/PageNotFound");
   }
 };
+
+
+// const getCartPage = async (req, res) => {
+//   try {
+//     const userId = req.session.user;
+//     const user = await User.findById(userId).populate("cart.productId");
+
+//     let quantity = 0;
+//     let grandTotal = 0;
+//     const cartItems = user.cart.map((item) => {
+//       quantity += item.quantity;
+//       const total = item.quantity * item.productId.salePrice;
+//       grandTotal += total;
+//       return {
+//         product: item.productId,
+//         quantity: item.quantity,
+//         total,
+//       };
+//     });
+
+//     req.session.grandTotal = grandTotal;
+
+//     res.render("cart", {
+//       user,
+//       cartItems,
+//       quantity,
+//       grandTotal,
+//     });
+//   } catch (error) {
+//     console.error("Error in getCartPage:", error);
+//     res.redirect("/PageNotFound");
+//   }
+// };
 
 const addToCart = async (req, res) => {
   try {
