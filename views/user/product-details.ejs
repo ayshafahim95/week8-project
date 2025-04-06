@@ -94,8 +94,14 @@
                                          <a href="#" class="qty-up" onclick=""><i class="fi-rs-angle-small-up"></i></a>
                                      </div>
                                      <div class="product-extra-link2">
-                                      
-                                         <button type="submit" class="button button-add-to-cart" onclick="">Add to cart</button>
+
+                                        <button 
+                                        type="button" 
+                                        class="button button-add-to-cart" 
+                                        onclick="addToCart('<%= product._id %>')">
+                                        Add to cart
+                                      </button>
+                                         
                                        
                                          <a aria-label="Add To Wishlist" class="action-btn hover-up" href="#"><i class="fi-rs-heart"></i></a>
                                      </div>
@@ -115,4 +121,28 @@
      </div>
  </section>
 </main>
+<script>
+    function addToCart(productId) {
+      fetch('/addToCart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: productId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === true) {
+          alert("✅ Product added to cart!");
+        } else {
+          alert("❌ " + data.message);
+        }
+      })
+      .catch(err => {
+        console.error("Add to cart failed", err);
+        alert("Something went wrong. Please try again.");
+      });
+    }
+  </script>
+  
 <%- include("../../views/partials/user/footer") %>
