@@ -43,5 +43,5 @@ const addressSchema=new Schema({
         }
     }]
 })
-const Adress=mongoose.model("Address",addressSchema);
+const Address=mongoose.model("Address",addressSchema);
 module.exports=Address;

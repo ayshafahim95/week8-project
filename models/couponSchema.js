@@ -16,11 +16,11 @@ const couponSchema=new Schema({
         type:Date,
         required:true
     },
-    Offerprice:{
+    offerPrice:{
         type:Number,
         required:true
     },
-    minimumprice:{
+    minimumPrice:{
         type:Number,
         required:true,
 
