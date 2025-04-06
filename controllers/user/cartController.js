@@ -292,11 +292,12 @@ const addToCart = async (req, res) => {
 
     if (existingIndex !== -1) {
       const cartItem = cart.Items[existingIndex];
-      if (cartItem.quantity < product.quantity) {
+      if (cartItem.quantity < product.quantity && cartItem.quantity < 10) {
         cartItem.quantity += 1;
-      } else {
-        return res.json({ status: false, message: "Reached stock limit" });
-      }
+    } else {
+        return res.json({ status: false, message: "Cannot add more than 10 or exceed stock" });
+    }
+    
     } else {
       cart.Items.push({
         productId,
