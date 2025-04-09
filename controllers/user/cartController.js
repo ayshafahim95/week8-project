@@ -131,10 +131,10 @@ const changeQuantity = async (req, res) => {
     const userId = req.session.user;
     const { productId, count } = req.body;
 
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
+    const cart = await Cart.findOne({ userId }).populate("Items.productId");
     if (!cart) return res.json({ status: false, error: "Cart not found" });
 
-    const item = cart.items.find(
+    const item = cart.Items.find(
       (item) => item.productId && item.productId._id.toString() === productId
     );
 
@@ -155,7 +155,7 @@ const changeQuantity = async (req, res) => {
     const totalAmount = item.quantity * item.productId.salePrice;
 
     let grandTotal = 0;
-    cart.items.forEach((item) => {
+    cart.Items.forEach((item) => {
       grandTotal += item.quantity * item.productId.salePrice;
     });
 
@@ -171,6 +171,7 @@ const changeQuantity = async (req, res) => {
     res.status(500).json({ status: false, error: "Server error" });
   }
 };
+
 
 
 
